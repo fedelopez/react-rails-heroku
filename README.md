@@ -44,8 +44,32 @@ rails db:create && rails db:migrate && rails db:seed
 ```
 
 Create a controller `Conferences` with a `get` action:
+
 ```bash
 rails generate controller Conferences get
+```
+
+Create a controller named `ApiController` with no actions:
+
+```bash
+rails generate controller ApiController
+```
+
+Make sure it looks empty as follows:
+
+```ruby
+class ApiController < ActionController::API
+end
+```
+
+Update the `Conferences` controller to return all conferences and extend `ApiController`:
+
+```ruby
+class ConferencesController < ApiController
+  def get
+    render json: Conference.all.as_json, status: 200
+  end
+end
 ```
 
 Update the generated route in `routes.rb` to the following:
@@ -182,9 +206,13 @@ First up, we’re going to tell Rails to pass any HTML requests that it doesn't 
 
 In your `app/controllers/application_controller.rb`, add a `fallback_index_html` method:
 
+Note: Make sure it extends `ActionController::Base` otherwise it won't be able to render properly the html:
+
 ```ruby
-def fallback_index_html
-  render :file => 'public/index.html'
+class ApplicationController < ActionController::Base
+  def fallback_index_html
+    render :file => 'public/index.html'
+  end
 end
 ```
 
@@ -196,26 +224,32 @@ get '*path', to: "application#fallback_index_html", constraints: ->(request) do
 end
 ```
 
-Now you can add a routing library such as Reach Router:
+Now you can add a routing library such as React Router DOM:
 
 ```bash
-yarn add @reach/router
+yarn add react-router-dom
 ```
 
 Create a `Routes` component:
 
 ```jsx harmony
 import React from 'react';
-import {Router} from '@reach/router';
-import App from './App';
+import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
+import App from "./App";
 
 const About = () => <h1>Coming soon!</h1>;
 
 function Routes() {
     return (
         <Router>
-            <App path="/"/>
-            <About path="/about"/>
+            <Switch>
+                <Route path="/about">
+                    <About/>
+                </Route>
+                <Route exact path="/">
+                    <App/>
+                </Route>
+            </Switch>
         </Router>
     );
 }
