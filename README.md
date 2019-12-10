@@ -1,4 +1,6 @@
-# README
+![General Assembly](https://github.com/fedelopez/react-rails-heroku/blob/master/docs/generalassembly.png)
+
+# Deploying a React app served by Rails in Heroku
 
 ## Setting up the apps
 
@@ -149,8 +151,17 @@ heroku apps:create
 Now let's add the buildpacks with the runtimes needed to deploy our app:
 
 ```bash
-heroku buildpacks:add heroku/nodejs --index 1
-heroku buildpacks:add heroku/ruby --index 2
+heroku buildpacks:add heroku/nodejs --index 1 --app <APP NAME>
+heroku buildpacks:add heroku/ruby --index 2 --app <APP NAME>
+```
+
+After running the second command, you should get this message:
+
+```text
+Buildpack added. Next release on cryptic-garden-37409 will use:
+  1. heroku/nodejs
+  2. heroku/ruby
+Run git push heroku master to create a new release using these buildpacks.
 ```
 
 ```bash
@@ -164,3 +175,57 @@ heroku run rake db:seed
 ```bash
 heroku open
 ```
+
+## Routing 
+
+First up, we’re going to tell Rails to pass any HTML requests that it doesn't catch to our React app:
+
+In your `app/controllers/application_controller.rb`, add a `fallback_index_html` method:
+
+```ruby
+def fallback_index_html
+  render :file => 'public/index.html'
+end
+```
+
+And at the bottom of your `config/routes.rb`:
+
+```ruby
+get '*path', to: "application#fallback_index_html", constraints: ->(request) do
+  !request.xhr? && request.format.html?
+end
+```
+
+Now you can add a routing library such as Reach Router:
+
+```bash
+yarn add @reach/router
+```
+
+Create a `Routes` component:
+
+```jsx harmony
+import React from 'react';
+import {Router} from '@reach/router';
+import App from './App';
+
+const About = () => <h1>Coming soon!</h1>;
+
+function Routes() {
+    return (
+        <Router>
+            <App path="/"/>
+            <About path="/about"/>
+        </Router>
+    );
+}
+
+export default Routes;
+```
+
+And in `index.js` make sure to render the `Routes.js` instead of the `App.js`:
+
+```jsx harmony
+ReactDOM.render(<Routes />, document.getElementById('root'));
+```
+
