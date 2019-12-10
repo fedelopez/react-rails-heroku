@@ -122,6 +122,24 @@ release: bin/rake db:migrate
 Note the `release` command, this is ran by Heroku just before a new release of the app is deployed, and we will use it 
 to make sure our DB is migrated.
 
+Create a top level `package.json` to instruct Heroku serving the Rails app from React:
+
+```json
+{
+  "name": "react-rails-heroku",
+  "license": "MIT",
+  "engines": {
+    "node": "10.15.3",
+    "yarn": "1.15.2"
+  },
+  "scripts": {
+    "build": "yarn --cwd web install && yarn --cwd web build",
+    "deploy": "cp -a web/build/. public/",
+    "heroku-postbuild": "yarn build && yarn deploy"
+  }
+}
+```
+
 Create the app in Heroku (make sure you are logged in):
 
 ```bash
@@ -131,8 +149,8 @@ heroku apps:create
 Now let's add the buildpacks with the runtimes needed to deploy our app:
 
 ```bash
-heroku buildpacks:add heroku/nodejs
-heroku buildpacks:add heroku/ruby
+heroku buildpacks:add heroku/nodejs --index 1
+heroku buildpacks:add heroku/ruby --index 2
 ```
 
 ```bash
