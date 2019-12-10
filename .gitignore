@@ -1,0 +1,15 @@
+# Rails
+.bundle
+/log/*
+/tmp/*
+!/log/.keep
+!/tmp/.keep
+/storage/*
+!/storage/.keep
+/.byebug_history
+/config/master.key
+# React
+web/node_modules
+
+.idea/
+.DS_store
