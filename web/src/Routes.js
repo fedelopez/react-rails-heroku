@@ -1,5 +1,5 @@
 import React from 'react';
-import {Router} from "@reach/router";
+import {BrowserRouter as Router, Switch, Route, Link} from "react-router-dom";
 import App from "./App";
 
 const About = () => <h1>Coming soon!</h1>;
@@ -7,8 +7,14 @@ const About = () => <h1>Coming soon!</h1>;
 function Routes() {
     return (
         <Router>
-            <App path="/"/>
-            <About path="/about"/>
+            <Switch>
+                <Route path="/about">
+                    <About/>
+                </Route>
+                <Route path="/">
+                    <App/>
+                </Route>
+            </Switch>
         </Router>
     );
 }
