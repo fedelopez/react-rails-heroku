@@ -1,5 +1,5 @@
 import React from 'react';
-import {BrowserRouter as Router, Switch, Route, Link} from "react-router-dom";
+import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
 import App from "./App";
 
 const About = () => <h1>Coming soon!</h1>;
