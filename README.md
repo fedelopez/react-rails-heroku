@@ -52,10 +52,10 @@ rails generate controller Conferences get
 Create a controller named `ApiController` with no actions:
 
 ```bash
-rails generate controller ApiController
+rails generate controller Api
 ```
 
-Make sure it looks empty as follows:
+Update the `ApiController` to extend `ActionController::API`:
 
 ```ruby
 class ApiController < ActionController::API
@@ -89,7 +89,7 @@ class App extends React.Component {
     };
 
     componentDidMount() {
-        fetch('/conferences')
+        fetch('/api/conferences')
             .then(response => response.json())
             .then(json => {
                this.setState({conferences: json})
@@ -175,8 +175,8 @@ heroku apps:create
 Now let's add the buildpacks with the runtimes needed to deploy our app:
 
 ```bash
-heroku buildpacks:add heroku/nodejs --index 1 --app <APP NAME>
-heroku buildpacks:add heroku/ruby --index 2 --app <APP NAME>
+heroku buildpacks:add heroku/nodejs --index 1
+heroku buildpacks:add heroku/ruby --index 2
 ```
 
 After running the second command, you should get this message:
@@ -224,32 +224,26 @@ get '*path', to: "application#fallback_index_html", constraints: ->(request) do
 end
 ```
 
-Now you can add a routing library such as React Router DOM:
+Now you can add a routing library such as Reach Router:
 
 ```bash
-yarn add react-router-dom
+yarn add @reach/router
 ```
 
 Create a `Routes` component:
 
 ```jsx harmony
 import React from 'react';
-import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
-import App from "./App";
+import {Router} from '@reach/router'
+import App from './App'
 
 const About = () => <h1>Coming soon!</h1>;
 
 function Routes() {
     return (
         <Router>
-            <Switch>
-                <Route path="/about">
-                    <About/>
-                </Route>
-                <Route exact path="/">
-                    <App/>
-                </Route>
-            </Switch>
+            <App path="/"/>
+            <About path="about"/>
         </Router>
     );
 }
